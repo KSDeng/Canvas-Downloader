@@ -1,38 +1,17 @@
-import requests, os, datetime
+import requests, os
 from contextlib import closing
-from cookies import *
+from parameters import *
 
-parameters = \
-{
-    "queryParameters": {
-        "query": None,
-        "sortColumn": 1,
-        "sortAscending": False,
-        "maxResults": 25,
-        "page": 0,
-        "startDate": None,
-        "endDate": None,
-        "folderID": "9161463d-6906-4a45-88b1-aee500604cf4",
-        "bookmarked": False,
-        "getFolderData": True,
-        "isSharedWithMe": False,
-        "isSubscriptionsPage": False,
-        "includeArchived": True,
-        "includeArchivedStateCount": True,
-        "sessionListOnlyArchived": False,
-        "includePlaylists": True
-    }
-}
 def get_sources():
     global ASPXAUTH
     global sandboxCookie
+    global query_parameters
     if ASPXAUTH is None or sandboxCookie is None:
         print('set cookie and auth first')
         exit(1)
     ret = []
     res = requests.post('https://mediaweb.ap.panopto.com/Panopto/Services/Data.svc/GetSessions', headers={
-        'cookie': f'.ASPXAUTH={ASPXAUTH}; sandboxCookie={sandboxCookie}'},
-                        json=parameters)
+        'cookie': f'.ASPXAUTH={ASPXAUTH}; sandboxCookie={sandboxCookie}'}, json=query_parameters)
     if res.status_code != 200:
         print('cookie & auth wrong or expired, reset them')
         exit(1)
