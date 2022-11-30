@@ -1,4 +1,4 @@
-import requests, os
+import requests, os, datetime
 from contextlib import closing
 from parameters import *
 
@@ -35,14 +35,20 @@ def download_video(download_url, download_path):
                 done_block = int((data_count / content_size) * 50)
                 data_count = data_count + len(data)
                 current_progress = (data_count / content_size) * 100
-                print("\r %s [%s%s] %d%% " % (video_name+"---->", done_block * '█', ' ' * (50 - 1 - done_block), current_progress), end=" ")
+                print("\r %s [%s%s] %d%% " % (video_name+"---->", done_block * '█',
+                                              ' ' * (50 - 1 - done_block), current_progress), end=" ")
 
 if __name__ == '__main__':
     if not os.path.exists('output'):
         os.makedirs('output')
     sources = get_sources()
+    with open(f'output/{datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.txt', 'w') as f:
+        for i in sources:
+            f.write(f'{i[0]}: {i[1]}\n')
+    f.close()
     for i in sources:
         save_path = '{}.mp4'.format(i[0]).replace('/','')
-        download_video('{}'.format(i[1]), save_path)
+        if not os.path.exists(save_path):
+            download_video('{}'.format(i[1]), save_path)
 
 
